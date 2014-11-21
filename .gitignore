@@ -186,4 +186,7 @@ $RECYCLE.BIN/
 *.out
 *.app
 
+
 /SierraWorks/Saved
+/SierraWorks/Config
+/SierraWorks/Intermediate
