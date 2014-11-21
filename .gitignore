@@ -190,3 +190,13 @@ $RECYCLE.BIN/
 /DerivedDataCache
 /Intermediate
 /Saved
+
+Binaries
+DerivedDataCache
+Intermediate
+Saved
+
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
