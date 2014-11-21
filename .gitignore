@@ -186,7 +186,7 @@ $RECYCLE.BIN/
 *.out
 *.app
 
-/Binaries
-/DerivedDataCache
-/Intermediate
-/Saved
+SierraJattaaRacing/Binaries
+SierraJattaaRacing/DerivedDataCache
+SierraJattaaRacing/Intermediate
+SierraJattaaRacing/Saved
