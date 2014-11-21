@@ -186,6 +186,7 @@ $RECYCLE.BIN/
 *.out
 *.app
 
-/Saved
-/Config
+/Binaries
+/DerivedDataCache
 /Intermediate
+/Saved
