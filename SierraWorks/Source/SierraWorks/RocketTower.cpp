@@ -7,7 +7,8 @@
 ARocketTower::ARocketTower(const class FPostConstructInitializeProperties& PCIP)
 	: Super(PCIP)
 {
-	static ConstructorHelpers::FObjectFinder<UBlueprint>MyObj(TEXT("Blueprint'/Game/Blueprints/Duckannon'"));
+	//static ConstructorHelpers::FObjectFinder<UBlueprint>MyObj(TEXT("Blueprint'/Game/Blueprints/Rokkit'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint>MyObj(TEXT("Blueprint'/Game/Blueprints/Rocket'"));
 	BulletBlueprint = (UClass*)MyObj.Object->GeneratedClass;
 
 	shootTimer = 2.0f;
@@ -35,6 +36,7 @@ void ARocketTower::Tick(float DeltaSeconds)
 	*/
 	//GetAttachParentActor()->SetActorLocation(FVector(0.0f, 0.0f, (float)testNumber));
 	//testNumber += 1.f;
+	/*
 	APawn *player = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetControlledPawn();
 	FVector actor2 = player->GetActorLocation(); //+ player->GetRootPrimitiveComponent()->GetPhysicsLinearVelocity() *DeltaSeconds * 10;
 	FVector actor = GetAttachParentActor()->GetActorLocation();
@@ -42,13 +44,13 @@ void ARocketTower::Tick(float DeltaSeconds)
 	FRotator test = FRotationMatrix::MakeFromX(Direction).Rotator();
 	FRotator test2 = FRotator(1.0f, 0.0f, 0.0f);
 	FRotator finalrot = FRotator(test.Quaternion() * test2.Quaternion());
-
+	finalrot.Pitch = 0.0f;
+	finalrot.Roll = 0.0f;
 	FVector vec2 = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetControlledPawn()->GetActorLocation();
 	FVector vec = GetAttachParentActor()->GetActorLocation();
 	float distance = FVector::Dist(actor, actor2);
-
-	finalrot.Pitch -= 10 - distance / 10000 * 10;
-	GetAttachParentActor()->SetActorRotation(finalrot);
+	*/
+	//GetAttachParentActor()->SetActorRotation(finalrot);
 	if (UGameplayStatics::GetPlayerController(GetWorld(), 0)->WasInputKeyJustPressed(EKeys::I))
 	{
 
@@ -57,7 +59,7 @@ void ARocketTower::Tick(float DeltaSeconds)
 	{
 
 
-		Shoot(distance);
+		Shoot();
 		shootTimer = 2.f;
 	}
 	else
@@ -66,7 +68,7 @@ void ARocketTower::Tick(float DeltaSeconds)
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::FromInt(testNumber));
 	//GetAttachParentActor()->SetActorRotation()
 }
-void ARocketTower::Shoot(float distance)
+void ARocketTower::Shoot()
 {
 	/*
 	const FName filename = FName(TEXT("Blueprint'/Game/Blueprints/PickUp.PickUp'"));
@@ -74,27 +76,31 @@ void ARocketTower::Shoot(float distance)
 	FRotator rot = GetAttachParentActor()->GetActorRotation();
 	SpawnBP(GetWorld(), (UClass*)LoadObjFromPath<UBlueprint>(&filename), loc, rot);
 	*/
-	APawn *player = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetControlledPawn();
-	int randomValue = distance / 10000;
-	FVector vec = player->GetActorLocation() + FVector(FMath::RandRange(-randomValue, randomValue), FMath::RandRange(-randomValue, randomValue), 0.0f); //+ player->GetRootPrimitiveComponent()->GetPhysicsLinearVelocity() *DeltaSeconds * 10;
-	FVector vec2 = GetAttachParentActor()->GetActorLocation();
-	FVector Direction = vec - vec2;
-	FRotator test = FRotationMatrix::MakeFromX(Direction).Rotator();
-	FRotator test2 = FRotator(1.0f, 0.0f, 0.0f);
-	FRotator finalrot = FRotator(test.Quaternion() * test2.Quaternion());
+	/*
+	AActor *invisBaseRocket = nullptr;
 
-
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->GetName() == "invisrocket")
+		{
+			invisBaseRocket = *ActorItr;
+		}
+	}
+	if (invisBaseRocket == nullptr)
+		invisBaseRocket = GetAttachParentActor();
+	FString name = invisBaseRocket->GetName();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, name);
+	FVector invisBaseRocketLoc = invisBaseRocket->GetActorLocation();
+	FRotator invisBaseRocketRot = invisBaseRocket->GetActorRotation();
 	FVector forward = GetAttachParentActor()->GetActorForwardVector();
-	forward.X = -forward.X;
-	forward.Y = -forward.Y;
-	forward.Z = -forward.Z;
-	FVector loc = GetAttachParentActor()->GetActorLocation() + forward * 500.0f;
-	FRotator rot = GetAttachParentActor()->GetActorRotation();
-	AActor* actor = GetWorld()->SpawnActor<AActor>(BulletBlueprint, loc, finalrot);
+	*/
+	FVector rocketLocation = FVector(GetActorLocation().X, GetActorLocation().Y-100, GetActorLocation().Z+90);
+	FRotator rocketRotation = FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, GetActorRotation().Roll+ 80);
+	AActor* actor = GetWorld()->SpawnActor<AActor>(BulletBlueprint, rocketLocation, rocketRotation);
 
 	//actor->GetRootPrimitiveComponent()->AddImpulse(actor->GetActorForwardVector()* 5000.0f);
-	actor->GetRootPrimitiveComponent()->SetEnableGravity(false);
-	actor->GetRootPrimitiveComponent()->SetPhysicsLinearVelocity(actor->GetActorForwardVector()*10000.0f); //* (distance/10000 * 1.0f));
+	//actor->GetRootPrimitiveComponent()->SetEnableGravity(false);
+	//actor->GetRootPrimitiveComponent()->SetPhysicsLinearVelocity(actor->GetActorForwardVector()*10000.0f); //* (distance/10000 * 1.0f));
 }
 
 

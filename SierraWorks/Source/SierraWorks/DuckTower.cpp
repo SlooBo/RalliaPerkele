@@ -46,18 +46,28 @@ void ADuckTower::Tick(float DeltaSeconds)
 	//testNumber += 1.f;
 	APawn *player = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetControlledPawn();
 	FVector actor2 = player->GetActorLocation(); //+ player->GetRootPrimitiveComponent()->GetPhysicsLinearVelocity() *DeltaSeconds * 10;
-	FVector actor = GetAttachParentActor()->GetActorLocation();
+	FVector actor = GetActorLocation();
 	FVector Direction = actor - actor2;
 	FRotator test = FRotationMatrix::MakeFromX(Direction).Rotator();
 	FRotator test2 = FRotator(1.0f, 0.0f, 0.0f);
 	FRotator finalrot = FRotator(test.Quaternion() * test2.Quaternion());
 
 	FVector vec2 = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetControlledPawn()->GetActorLocation();
-	FVector vec = GetAttachParentActor()->GetActorLocation();
+	FVector vec = GetActorLocation();
 	float distance = FVector::Dist(actor, actor2);
-
-	finalrot.Pitch -= 10- distance / 10000 * 10;
-	GetAttachParentActor()->SetActorRotation(finalrot);
+	
+	//finalrot.Pitch -= 10 - distance / 10000 * 10;
+	//SetActorRotation(finalrot);
+	
+	TArray<UStaticMeshComponent*> comps;
+	GetComponents(comps);
+	/*
+	for (auto StaticMeshComponent : comps)
+	{
+		StaticMeshComponent->SetVisibility(true);
+		StaticMeshComponent->SetWorldRotation(finalrot);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, StaticMeshComponent->GetComponentRotation().ToString());
+	}*/
 	if (UGameplayStatics::GetPlayerController(GetWorld(), 0)->WasInputKeyJustPressed(EKeys::I))
 	{
 
@@ -83,25 +93,25 @@ void ADuckTower::Shoot(float distance)
 	FRotator rot = GetAttachParentActor()->GetActorRotation();
 	SpawnBP(GetWorld(), (UClass*)LoadObjFromPath<UBlueprint>(&filename), loc, rot);
 	*/
-	APawn *player = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetControlledPawn();
+	APawn *player = UGameplayStatics::GetPlayerController(GetWorld(), 1)->GetControlledPawn();
 	int randomValue = distance / 10000;
 	FVector vec = player->GetActorLocation() + FVector(FMath::RandRange(-randomValue, randomValue), FMath::RandRange(-randomValue, randomValue), 0.0f); //+ player->GetRootPrimitiveComponent()->GetPhysicsLinearVelocity() *DeltaSeconds * 10;
-	FVector vec2 = GetAttachParentActor()->GetActorLocation();
+	FVector vec2 = GetActorLocation();
 	FVector Direction = vec - vec2;
 	FRotator test = FRotationMatrix::MakeFromX(Direction).Rotator();
 	FRotator test2 = FRotator(1.0f, 0.0f, 0.0f);
 	FRotator finalrot = FRotator(test.Quaternion() * test2.Quaternion());
 
 
-	FVector forward = GetAttachParentActor()->GetActorForwardVector();
-	forward.X = -forward.X;
-	forward.Y = -forward.Y;
-	forward.Z = -forward.Z;
-	FVector loc = GetAttachParentActor()->GetActorLocation()+ forward * 500.0f;
-	FRotator rot = GetAttachParentActor()->GetActorRotation();
-	AActor* actor = GetWorld()->SpawnActor<AActor>(BulletBlueprint, loc, finalrot);
-
+	FVector forward = GetActorForwardVector();
+	finalrot.Roll = -finalrot.Roll;
+	finalrot.Yaw = -finalrot.Yaw;
+	finalrot.Pitch = -finalrot.Pitch;
+	FVector loc = GetActorLocation() + forward * 500.0f;
+	FRotator rot = GetActorRotation();
+	AActor* actor = GetWorld()->SpawnActor<AActor>(BulletBlueprint, loc, GetActorRotation());
+	actor->SetActorScale3D(FVector(3.0f, 3.0f, 3.0f));
 	//actor->GetRootPrimitiveComponent()->AddImpulse(actor->GetActorForwardVector()* 5000.0f);
-	actor->GetRootPrimitiveComponent()->SetEnableGravity(false);
-	actor->GetRootPrimitiveComponent()->SetPhysicsLinearVelocity(actor->GetActorForwardVector()*10000.0f); //* (distance/10000 * 1.0f));
+
+	//actor->GetRootPrimitiveComponent()->SetPhysicsLinearVelocity(actor->GetActorForwardVector()*10000.0f); //* (distance/10000 * 1.0f));
 }
